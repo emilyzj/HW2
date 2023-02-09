@@ -32,7 +32,6 @@ class TmdbSpider(scrapy.Spider):
         actor_name = actor_name.split('—')[0][:-1]
 
         # get movie/tv names
-        # need to filter out production and crew credits
         for name in response.css('a.tooltip bdi::text').getall():
             yield {
                 "actor": actor_name,
