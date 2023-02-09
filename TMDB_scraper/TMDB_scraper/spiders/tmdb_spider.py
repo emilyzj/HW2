@@ -10,24 +10,30 @@ class TmdbSpider(scrapy.Spider):
 
     def parse(self, response):
         # navigate to cast page
-        cast = response.css('li.new_button a::attr(href)').get()
+        cast = response.css('p.new_button a').attrib['href']
         if cast:
-            yield response.follow(cast, callback = self.parse_full_credits)        
+            cast = response.urljoin(cast)
+            yield scrapy.Request(cast, callback=self.parse_full_credits)        
 
 
     def parse_full_credits(self, response):
-        actor = response.css('li.data_order a::attr(href').get()
-        if actor:
-            yield response.follow(actor, callback = self.parse_actor_page)
+        # get list of actors
+        people = response.css('div.info:not(.crew) a::attr(href)').getall()
+        actors = [actor for actor in people if not actor.startswith('/tv/')]
+
+        for actor in actors:
+            yield response.follow(actor, callback=self.parse_actor_page)
 
 
     def parse_actor_page(self, response):
         # get actor's name 
-        actor_name = response.css('h2.title::text').get()
+        actor_name = response.css('title::text').get()
+        # get actor name from the string
+        actor_name = actor_name.split('—')[0][:-1]
 
         # get movie/tv names
-        for movie in response.css('.tooltip'):
-            name = response.css('h2.title').get()
+        # need to filter out production and crew credits
+        for name in response.css('a.tooltip bdi::text').getall():
             yield {
                 "actor": actor_name,
                 "movie_or_tv_name": name
