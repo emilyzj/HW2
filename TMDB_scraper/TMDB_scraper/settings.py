@@ -13,7 +13,7 @@ SPIDER_MODULES = ['TMDB_scraper.spiders']
 NEWSPIDER_MODULE = 'TMDB_scraper.spiders'
 
 # prevent scraper from downloading too much data 
-#CLOSESPIDER_PAGECOUNT = 20  
+# CLOSESPIDER_PAGECOUNT = 20  
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15'
